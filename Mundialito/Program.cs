@@ -1,4 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using Infrastructure.Persistence;
+using Infrastructure.Repositories;
+using Application.Abstractions;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 
 // Add services to the container.
 
