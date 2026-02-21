@@ -2,6 +2,7 @@ using Application.Abstractions;
 using Application.Commands.Players;
 using Application.Commands.Teams;
 using Infrastructure.Persistence;
+using Infrastructure.Queries;
 using Infrastructure.Querys;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ builder.Services.AddScoped<DeleteTeamCommandHandler>();
 
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<CreatePlayerCommandHandler>();
+builder.Services.AddScoped<IPlayerQueryRepository, PlayerQueryRepository>();
 // Add services to the container.
 
 builder.Services.AddControllers();
