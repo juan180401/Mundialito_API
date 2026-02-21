@@ -15,6 +15,7 @@ public class TeamsController : ControllerBase
 {
     private readonly CreateTeamCommandHandler _handler;
     private readonly ITeamQueryRepository _queryRepository;
+    private readonly UpdateTeamCommandHandler _updateHandler;
 
     /// <summary>
     /// Inyectamos el handler.
@@ -23,9 +24,11 @@ public class TeamsController : ControllerBase
     /// </summary>
     public TeamsController(
     CreateTeamCommandHandler handler,
+    UpdateTeamCommandHandler updateHandler,
     ITeamQueryRepository queryRepository)
     {
         _handler = handler;
+        _updateHandler = updateHandler;
         _queryRepository = queryRepository;
     }
 
@@ -54,5 +57,20 @@ public class TeamsController : ControllerBase
         var result = await _queryRepository.GetPagedAsync(pageNumber, pageSize);
 
         return Ok(result);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id, UpdateTeamCommand command)
+    {
+        // Forzamos que el Id de la ruta sea el que se use (idempotencia básica)
+        if (id != command.Id)
+            return BadRequest("El id de la ruta no coincide con el del cuerpo");
+
+        var result = await _updateHandler.Handle(command);
+
+        if (!result.IsSuccess)
+            return NotFound(result.Error);
+
+        return NoContent(); // 204 correcto para PUT exitoso
     }
 }

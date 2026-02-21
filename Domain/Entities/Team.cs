@@ -22,5 +22,15 @@ namespace Domain.Entities
             Id = Guid.NewGuid();
             Name = name;
         }
+
+        public void UpdateName(string name)
+        {
+            // Validación básica
+            // Se lanza excepción solo para proteger la invariancia interna de la entidad.            
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Nombre inválido");
+
+            Name = name;
+        }
     }
 }

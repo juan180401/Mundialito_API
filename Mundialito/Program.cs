@@ -13,6 +13,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<CreateTeamCommandHandler>();
 builder.Services.AddScoped<ITeamQueryRepository, TeamQueryRepository>();
+builder.Services.AddScoped<UpdateTeamCommandHandler>();
 
 // Add services to the container.
 
