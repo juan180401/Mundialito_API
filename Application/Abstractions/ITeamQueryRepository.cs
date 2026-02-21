@@ -17,5 +17,8 @@ public interface ITeamQueryRepository
 {
     Task<PagedResult<TeamResponse>> GetPagedAsync(
         int pageNumber,
-        int pageSize);
+        int pageSize,
+        string? search,
+        string? sortBy,
+        string? sortDirection);
 }

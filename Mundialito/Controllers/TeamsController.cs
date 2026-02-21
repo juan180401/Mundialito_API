@@ -55,9 +55,17 @@ public class TeamsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(
     [FromQuery] int pageNumber = 1,
-    [FromQuery] int pageSize = 10)
+    [FromQuery] int pageSize = 10,
+    [FromQuery] string? search = null,
+    [FromQuery] string? sortBy = "Name",
+    [FromQuery] string? sortDirection = "ASC")
     {
-        var result = await _queryRepository.GetPagedAsync(pageNumber, pageSize);
+        var result = await _queryRepository.GetPagedAsync(
+            pageNumber,
+            pageSize,
+            search,
+            sortBy,
+            sortDirection);
 
         return Ok(result);
     }

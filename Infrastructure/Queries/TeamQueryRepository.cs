@@ -27,40 +27,62 @@ namespace Infrastructure.Querys
         }
 
         public async Task<PagedResult<TeamResponse>> GetPagedAsync(
-            int pageNumber,
-            int pageSize)
+          int pageNumber,
+          int pageSize,
+          string? search,
+          string? sortBy,
+          string? sortDirection)
         {
-            using var connection = new SqlConnection(_connectionString);
+                using var connection = new SqlConnection(_connectionString);
 
-            var offset = (pageNumber - 1) * pageSize;
+                var offset = (pageNumber - 1) * pageSize;
 
-            var sql = @"
-            SELECT COUNT(*) FROM Teams;
+                // Validamos columnas permitidas para evitar SQL Injection
+                var validColumns = new[] { "Name" };
 
-            SELECT Id, Name
-            FROM Teams
-            ORDER BY Name
-            OFFSET @Offset ROWS
-            FETCH NEXT @PageSize ROWS ONLY;
-        ";
-            //“Utilicé QueryMultiple para ejecutar ambas consultas en un solo roundtrip a la base de datos, reduciendo latencia y asegurando consistencia entre el total de registros y los datos paginados.”
-            using var multi = await connection.QueryMultipleAsync(sql, new
-            {
-                Offset = offset,
-                PageSize = pageSize
-            });
+                if (string.IsNullOrWhiteSpace(sortBy) || !validColumns.Contains(sortBy))
+                    sortBy = "Name";
 
-            var totalRecords = await multi.ReadFirstAsync<int>();
-            var data = await multi.ReadAsync<TeamResponse>();
+                sortDirection = sortDirection?.ToUpper() == "DESC" ? "DESC" : "ASC";
 
-            return new PagedResult<TeamResponse>
-            {
-                Data = data,
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-                TotalRecords = totalRecords,
-                TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
-            };
-        }
+                var whereClause = "";
+                var parameters = new DynamicParameters();
+
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    whereClause = "WHERE Name LIKE @Search";
+                    parameters.Add("Search", $"%{search}%");
+                }
+
+                parameters.Add("Offset", offset);
+                parameters.Add("PageSize", pageSize);
+
+                var sql = $@"
+                    SELECT COUNT(*) 
+                    FROM Teams
+                    {whereClause};
+
+                    SELECT Id, Name
+                    FROM Teams
+                    {whereClause}
+                    ORDER BY {sortBy} {sortDirection}
+                    OFFSET @Offset ROWS
+                    FETCH NEXT @PageSize ROWS ONLY;
+                ";
+                //“Utilicé QueryMultiple para ejecutar ambas consultas en un solo roundtrip a la base de datos, reduciendo latencia y asegurando consistencia entre el total de registros y los datos paginados.”
+                using var multi = await connection.QueryMultipleAsync(sql, parameters);
+
+                var totalRecords = await multi.ReadFirstAsync<int>();
+                var data = await multi.ReadAsync<TeamResponse>();
+
+                return new PagedResult<TeamResponse>
+                {
+                    Data = data,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
+                };
+            }        
     }
 }
