@@ -18,11 +18,14 @@ namespace Infrastructure.Persistence
         public DbSet<Player> Players => Set<Player>();
         public DbSet<Match> Matches => Set<Match>();
 
+        public DbSet<MatchGoal> MatchGoals => Set<MatchGoal>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Team>().HasKey(t => t.Id);
             modelBuilder.Entity<Player>().HasKey(p => p.Id);
             modelBuilder.Entity<Match>().HasKey(m => m.Id);
+            modelBuilder.Entity<MatchGoal>().HasKey(x => x.Id);
 
             modelBuilder.Entity<Player>()
                 .HasOne<Team>()
