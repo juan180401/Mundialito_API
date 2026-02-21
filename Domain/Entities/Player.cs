@@ -11,6 +11,7 @@ namespace Domain.Entities
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public Guid TeamId { get; private set; }
+        public int Goals { get; private set; }
 
         private Player() { }
 
@@ -19,6 +20,11 @@ namespace Domain.Entities
             Id = Guid.NewGuid();
             Name = name;
             TeamId = teamId;
+        }
+
+        public void AddGoal()
+        {
+            Goals++;
         }
     }
 }

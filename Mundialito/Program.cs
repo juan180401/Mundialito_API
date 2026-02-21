@@ -1,4 +1,5 @@
 using Application.Abstractions;
+using Application.Commands.Players;
 using Application.Commands.Teams;
 using Infrastructure.Persistence;
 using Infrastructure.Querys;
@@ -10,12 +11,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<CreateTeamCommandHandler>();
 builder.Services.AddScoped<ITeamQueryRepository, TeamQueryRepository>();
 builder.Services.AddScoped<UpdateTeamCommandHandler>();
 builder.Services.AddScoped<DeleteTeamCommandHandler>();
 
+builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
+builder.Services.AddScoped<CreatePlayerCommandHandler>();
 // Add services to the container.
 
 builder.Services.AddControllers();
