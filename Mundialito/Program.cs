@@ -1,6 +1,7 @@
 using Application.Abstractions;
 using Application.Commands.Teams;
 using Infrastructure.Persistence;
+using Infrastructure.Querys;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<CreateTeamCommandHandler>();
+builder.Services.AddScoped<ITeamQueryRepository, TeamQueryRepository>();
 
 // Add services to the container.
 

@@ -1,4 +1,5 @@
-﻿using Application.Commands.Teams;
+﻿using Application.Abstractions;
+using Application.Commands.Teams;
 using Application.Common;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,15 +14,19 @@ namespace Mundialito.Controllers;
 public class TeamsController : ControllerBase
 {
     private readonly CreateTeamCommandHandler _handler;
+    private readonly ITeamQueryRepository _queryRepository;
 
     /// <summary>
     /// Inyectamos el handler.
     /// El controller NO debe usar DbContext directo.
     /// Solo orquesta.
     /// </summary>
-    public TeamsController(CreateTeamCommandHandler handler)
+    public TeamsController(
+    CreateTeamCommandHandler handler,
+    ITeamQueryRepository queryRepository)
     {
         _handler = handler;
+        _queryRepository = queryRepository;
     }
 
     /// <summary>
@@ -39,5 +44,15 @@ public class TeamsController : ControllerBase
 
         // Si todo salió bien devolvemos 201 Created
         return CreatedAtAction(nameof(Create), new { id = result.Value }, result.Value);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
+    {
+        var result = await _queryRepository.GetPagedAsync(pageNumber, pageSize);
+
+        return Ok(result);
     }
 }
