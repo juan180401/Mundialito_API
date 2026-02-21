@@ -16,6 +16,7 @@ public class TeamsController : ControllerBase
     private readonly CreateTeamCommandHandler _handler;
     private readonly ITeamQueryRepository _queryRepository;
     private readonly UpdateTeamCommandHandler _updateHandler;
+    private readonly DeleteTeamCommandHandler _deleteHandler;
 
     /// <summary>
     /// Inyectamos el handler.
@@ -25,10 +26,12 @@ public class TeamsController : ControllerBase
     public TeamsController(
     CreateTeamCommandHandler handler,
     UpdateTeamCommandHandler updateHandler,
+    DeleteTeamCommandHandler deleteHandler,
     ITeamQueryRepository queryRepository)
     {
         _handler = handler;
         _updateHandler = updateHandler;
+        _deleteHandler = deleteHandler;
         _queryRepository = queryRepository;
     }
 
@@ -72,5 +75,18 @@ public class TeamsController : ControllerBase
             return NotFound(result.Error);
 
         return NoContent(); // 204 correcto para PUT exitoso
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var command = new DeleteTeamCommand { Id = id };
+
+        var result = await _deleteHandler.Handle(command);
+
+        if (!result.IsSuccess)
+            return BadRequest(result.Error);
+
+        return NoContent();
     }
 }

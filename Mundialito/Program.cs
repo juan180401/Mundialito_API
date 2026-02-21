@@ -14,6 +14,7 @@ builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<CreateTeamCommandHandler>();
 builder.Services.AddScoped<ITeamQueryRepository, TeamQueryRepository>();
 builder.Services.AddScoped<UpdateTeamCommandHandler>();
+builder.Services.AddScoped<DeleteTeamCommandHandler>();
 
 // Add services to the container.
 

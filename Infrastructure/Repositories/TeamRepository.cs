@@ -29,5 +29,10 @@ namespace Infrastructure.Repositories
         {
             return await _context.Teams.FirstOrDefaultAsync(x => x.Id == id);
         }
+
+        public void Remove(Team team)
+        {
+            _context.Teams.Remove(team);
+        }
     }
 }

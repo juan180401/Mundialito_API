@@ -11,5 +11,7 @@ namespace Application.Abstractions
     {
         Task AddAsync(Team team);
         Task<Team?> GetByIdAsync(Guid id);
+
+        void Remove(Team team);
     }
 }
