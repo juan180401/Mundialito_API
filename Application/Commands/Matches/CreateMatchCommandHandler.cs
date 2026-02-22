@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Application.Abstractions;
+using Application.Commands.Players;
+using Application.Common;
+using Domain.Entities;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Application.Abstractions;
-using Application.Common;
-using Domain.Entities;
 
 namespace Application.Commands.Matches
 {
@@ -14,11 +16,13 @@ namespace Application.Commands.Matches
         private readonly ITeamRepository _teamRepository;
         private readonly IMatchRepository _matchRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<CreateMatchCommandHandler> _logger;
 
         public CreateMatchCommandHandler(
             ITeamRepository teamRepository,
             IMatchRepository matchRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ILogger<CreateMatchCommandHandler> logger)
         {
             _teamRepository = teamRepository;
             _matchRepository = matchRepository;
@@ -66,7 +70,12 @@ namespace Application.Commands.Matches
                 command.MatchDate);
 
             await _matchRepository.AddAsync(match);
-
+            _logger.LogInformation(
+            "Partido creado {MatchId} {HomeTeamId} vs {AwayTeamId} {MatchDate}",
+            match.Id,
+            match.HomeTeamId,
+            match.AwayTeamId,
+            match.MatchDate);
             // Confirmamos transacción
             await _unitOfWork.CommitAsync();
 

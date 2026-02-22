@@ -1,6 +1,8 @@
 ﻿using Application.Abstractions;
 using Application.Common;
 using Domain.Entities;
+using Microsoft.Extensions.Logging;
+
 
 namespace Application.Commands.Matches;
 
@@ -10,12 +12,14 @@ public class RegisterMatchResultCommandHandler
     private readonly IPlayerRepository _playerRepository;
     private readonly IMatchGoalRepository _matchGoalRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<RegisterMatchResultCommandHandler> _logger;
 
     public RegisterMatchResultCommandHandler(
         IMatchRepository matchRepository,
         IPlayerRepository playerRepository,
         IMatchGoalRepository matchGoalRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ILogger<RegisterMatchResultCommandHandler> logger)
     {
         _matchRepository = matchRepository;
         _playerRepository = playerRepository;
@@ -95,6 +99,12 @@ public class RegisterMatchResultCommandHandler
 
         // Finalizar partido
         match.SetResult(command.HomeGoals, command.AwayGoals);
+
+        _logger.LogInformation(
+        "Resultado registrado {MatchId} {HomeGoals}-{AwayGoals}",
+        match.Id,
+        command.HomeGoals,
+        command.AwayGoals);
 
         await _unitOfWork.CommitAsync();
 
