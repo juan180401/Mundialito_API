@@ -40,6 +40,7 @@ public class TeamsController : ControllerBase
     /// HTTP POST → creación.
     /// </summary>
     [HttpPost]
+
     public async Task<IActionResult> Create(CreateTeamCommand command)
     {
         var result = await _handler.Handle(command);

@@ -32,15 +32,23 @@ builder.Services.AddScoped<RegisterMatchResultCommandHandler>();
 
 builder.Services.AddScoped<TopScorerQueryRepository>();
 builder.Services.AddScoped<StandingQueryRepository>();
+
+builder.Services.AddScoped<IIdempotencyRepository, IdempotencyRepository>();
+
+
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.OperationFilter<IdempotencyHeaderFilter>();
+});
 
 var app = builder.Build();
 
+app.UseMiddleware<IdempotencyMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

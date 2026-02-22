@@ -20,17 +20,22 @@ namespace Infrastructure.Persistence
 
         public DbSet<MatchGoal> MatchGoals => Set<MatchGoal>();
 
+        public DbSet<IdempotencyRecord> IdempotencyRecords => Set<IdempotencyRecord>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Team>().HasKey(t => t.Id);
             modelBuilder.Entity<Player>().HasKey(p => p.Id);
             modelBuilder.Entity<Match>().HasKey(m => m.Id);
-            modelBuilder.Entity<MatchGoal>().HasKey(x => x.Id);
+            modelBuilder.Entity<MatchGoal>().HasKey(x => x.Id);         
 
             modelBuilder.Entity<Player>()
                 .HasOne<Team>()
                 .WithMany(t => t.Players)
                 .HasForeignKey(p => p.TeamId);
+
+            modelBuilder.Entity<IdempotencyRecord>()
+            .HasIndex(x => x.Key)
+            .IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }
