@@ -11,7 +11,7 @@ using Application.Queries.Teams;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
-namespace Infrastructure.Querys
+namespace Infrastructure.Queries
 {
     /// <summary>
     /// Implementación real del read side usando Dapper.
