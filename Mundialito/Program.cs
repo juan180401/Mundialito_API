@@ -25,6 +25,7 @@ builder.Services.AddScoped<IPlayerQueryRepository, PlayerQueryRepository>();
 
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<CreateMatchCommandHandler>();
+builder.Services.AddScoped<MatchQueryRepository>();
 
 builder.Services.AddScoped<IMatchGoalRepository, MatchGoalRepository>();
 builder.Services.AddScoped<RegisterMatchResultCommandHandler>();

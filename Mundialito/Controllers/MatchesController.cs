@@ -1,4 +1,5 @@
 ﻿using Application.Commands.Matches;
+using Infrastructure.Queries;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -7,13 +8,16 @@ public class MatchesController : ControllerBase
 {
     private readonly CreateMatchCommandHandler _handler;
     private readonly RegisterMatchResultCommandHandler _handlerResult;
+    private readonly MatchQueryRepository _matchQueryRepository;
 
     public MatchesController(
         CreateMatchCommandHandler handler, 
-        RegisterMatchResultCommandHandler handlerResult)
+        RegisterMatchResultCommandHandler handlerResult,
+        MatchQueryRepository matchQueryRepository)
     {
         _handler = handler;
         _handlerResult = handlerResult;
+        _matchQueryRepository = matchQueryRepository;
     }
 
     [HttpPost]
@@ -44,5 +48,27 @@ public class MatchesController : ControllerBase
             return BadRequest(result.Error);
 
         return NoContent();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetMatches(
+    int pageNumber = 1,
+    int pageSize = 10,
+    string? sortBy = "date",
+    string? sortDirection = "desc",
+    Guid? teamId = null,
+    DateTime? date = null,
+    bool? isFinished = null)
+    {
+        var result = await _matchQueryRepository.GetMatchesAsync(
+            pageNumber,
+            pageSize,
+            sortBy,
+            sortDirection,
+            teamId,
+            date,
+            isFinished);
+
+        return Ok(result);
     }
 }
