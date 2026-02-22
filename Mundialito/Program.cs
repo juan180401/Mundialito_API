@@ -54,6 +54,7 @@ app.UseMiddleware<IdempotencyMiddleware>();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await context.Database.MigrateAsync();
     await DbInitializer.SeedAsync(context);
 }
 // Configure the HTTP request pipeline.
