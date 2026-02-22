@@ -26,10 +26,13 @@ public class StatsController : ControllerBase
     [HttpGet("topscorers")]
     public async Task<IActionResult> GetTopScorers(
     int pageNumber = 1,
-    int pageSize = 10)
+    int pageSize = 10,
+    string? sortBy = "goals",
+    string? sortDirection = "desc",
+    Guid? teamId = null)
     {
         var result = await _topScorerRepository
-            .GetTopScorersAsync(pageNumber, pageSize);
+            .GetTopScorersAsync(pageNumber, pageSize, sortBy, sortDirection, teamId);
 
         return Ok(result);
     }

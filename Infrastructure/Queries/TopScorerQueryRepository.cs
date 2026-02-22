@@ -23,44 +23,71 @@ namespace Infrastructure.Queries
         // Obtiene goleadores paginados y ordenados por goles descendente
         public async Task<PagedResult<TopScorerResponse>> GetTopScorersAsync(
             int pageNumber,
-            int pageSize)
+            int pageSize,
+            string? sortBy,
+            string? sortDirection,
+            Guid? teamId)
         {
-            using var connection = new SqlConnection(_connectionString);
+                if (pageNumber <= 0) pageNumber = 1;
+                if (pageSize <= 0) pageSize = 10;
+                if (pageSize > 100) pageSize = 100;
 
-            var sql = @"
-                SELECT COUNT(*) 
-                FROM Players 
-                WHERE Goals > 0;
+                using var connection = new SqlConnection(_connectionString);
 
-                SELECT 
-                    p.Id AS PlayerId,
-                    p.Name AS PlayerName,
-                    t.Name AS TeamName,
-                    p.Goals
-                FROM Players p
-                INNER JOIN Teams t ON t.Id = p.TeamId
-                WHERE p.Goals > 0
-                ORDER BY p.Goals DESC
-                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-            ";
+                // Columnas permitidas para evitar SQL Injection
+                var validSortColumns = new Dictionary<string, string>
+                {
+                    { "goals", "p.Goals" },
+                    { "name", "p.Name" },
+                    { "team", "t.Name" }
+                };
 
-            var multi = await connection.QueryMultipleAsync(sql, new
-            {
-                Offset = (pageNumber - 1) * pageSize,
-                PageSize = pageSize
-            });
+                var sortColumn = validSortColumns.ContainsKey(sortBy?.ToLower() ?? "")
+                    ? validSortColumns[sortBy!.ToLower()]
+                    : "p.Goals";
 
-            var totalRecords = await multi.ReadSingleAsync<int>();
-            var data = (await multi.ReadAsync<TopScorerResponse>()).ToList();
+                var direction = sortDirection?.ToLower() == "asc" ? "ASC" : "DESC";
 
-            return new PagedResult<TopScorerResponse>
-            {
-                Data = data,
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-                TotalRecords = totalRecords,
-                TotalPages = (int)Math.Ceiling((double)totalRecords / pageSize)
-            };
+                var whereClause = "WHERE p.Goals > 0";
+
+                if (teamId.HasValue)
+                    whereClause += " AND p.TeamId = @TeamId";
+
+                var sql = $@"
+                    SELECT COUNT(*) 
+                    FROM Players p
+                    {whereClause};
+
+                    SELECT 
+                        p.Id AS PlayerId,
+                        p.Name AS PlayerName,
+                        t.Name AS TeamName,
+                        p.Goals
+                    FROM Players p
+                    INNER JOIN Teams t ON t.Id = p.TeamId
+                    {whereClause}
+                    ORDER BY {sortColumn} {direction}
+                    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+                ";
+
+                var multi = await connection.QueryMultipleAsync(sql, new
+                {
+                    Offset = (pageNumber - 1) * pageSize,
+                    PageSize = pageSize,
+                    TeamId = teamId
+                });
+
+                var totalRecords = await multi.ReadSingleAsync<int>();
+                var data = (await multi.ReadAsync<TopScorerResponse>()).ToList();
+
+                return new PagedResult<TopScorerResponse>
+                {
+                    Data = data,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    TotalRecords = totalRecords,
+                    TotalPages = (int)Math.Ceiling((double)totalRecords / pageSize)
+                };
         }
     }
 }
