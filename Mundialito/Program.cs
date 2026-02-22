@@ -28,6 +28,9 @@ builder.Services.AddScoped<CreateMatchCommandHandler>();
 
 builder.Services.AddScoped<IMatchGoalRepository, MatchGoalRepository>();
 builder.Services.AddScoped<RegisterMatchResultCommandHandler>();
+
+builder.Services.AddScoped<TopScorerQueryRepository>();
+builder.Services.AddScoped<StandingQueryRepository>();
 // Add services to the container.
 
 builder.Services.AddControllers();
