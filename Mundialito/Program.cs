@@ -2,6 +2,7 @@ using Application.Abstractions;
 using Application.Commands.Matches;
 using Application.Commands.Players;
 using Application.Commands.Teams;
+using Infrastructure.Middleware;
 using Infrastructure.Persistence;
 using Infrastructure.Queries;
 using Infrastructure.Repositories;
@@ -48,6 +49,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<IdempotencyMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
