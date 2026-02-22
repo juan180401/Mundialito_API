@@ -51,6 +51,11 @@ var app = builder.Build();
 
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<IdempotencyMiddleware>();
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await DbInitializer.SeedAsync(context);
+}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
