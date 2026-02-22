@@ -17,9 +17,15 @@ public class StatsController : ControllerBase
     }
 
     [HttpGet("standings")]
-    public async Task<IActionResult> GetStandings()
+    public async Task<IActionResult> GetStandings(
+    int pageNumber = 1,
+    int pageSize = 10,
+    string? sortBy = "points",
+    string? sortDirection = "desc")
     {
-        var result = await _standingRepository.GetStandingsAsync();
+        var result = await _standingRepository
+            .GetStandingsAsync(pageNumber, pageSize, sortBy, sortDirection);
+
         return Ok(result);
     }
 
