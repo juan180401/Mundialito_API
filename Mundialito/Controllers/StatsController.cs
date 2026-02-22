@@ -24,9 +24,13 @@ public class StatsController : ControllerBase
     }
 
     [HttpGet("topscorers")]
-    public async Task<IActionResult> GetTopScorers()
+    public async Task<IActionResult> GetTopScorers(
+    int pageNumber = 1,
+    int pageSize = 10)
     {
-        var result = await _topScorerRepository.GetTopScorersAsync();
+        var result = await _topScorerRepository
+            .GetTopScorersAsync(pageNumber, pageSize);
+
         return Ok(result);
     }
 }
