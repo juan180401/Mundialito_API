@@ -79,25 +79,25 @@ namespace Infrastructure.Queries
             parameters.Add("PageSize", pageSize);
 
             var sql = $@"
-            SELECT COUNT(*)
-            FROM Matches m
-            {whereSql};
+                SELECT COUNT(*)
+                FROM Matches m
+                {whereSql};
 
-            SELECT 
-                m.Id AS MatchId,
-                ht.Name AS HomeTeamName,
-                at.Name AS AwayTeamName,
-                m.HomeGoals,
-                m.AwayGoals,
-                m.MatchDate,
-                m.IsFinished
-            FROM Matches m
-            INNER JOIN Teams ht ON ht.Id = m.HomeTeamId
-            INNER JOIN Teams at ON at.Id = m.AwayTeamId
-            {whereSql}
-            ORDER BY {sortColumn} {direction}
-            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-        ";
+                SELECT 
+                    m.Id AS MatchId,
+                    ht.Name AS HomeTeamName,
+                    at.Name AS AwayTeamName,
+                    m.HomeGoals,
+                    m.AwayGoals,
+                    m.MatchDate,
+                    m.IsFinished
+                FROM Matches m
+                INNER JOIN Teams ht ON ht.Id = m.HomeTeamId
+                INNER JOIN Teams at ON at.Id = m.AwayTeamId
+                {whereSql}
+                ORDER BY {sortColumn} {direction}
+                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+            ";
 
             var multi = await connection.QueryMultipleAsync(sql, parameters);
 
