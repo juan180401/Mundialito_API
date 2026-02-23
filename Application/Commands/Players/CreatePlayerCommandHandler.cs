@@ -24,6 +24,7 @@ public class CreatePlayerCommandHandler
         _teamRepository = teamRepository;
         _playerRepository = playerRepository;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result<Guid>> Handle(CreatePlayerCommand command)
