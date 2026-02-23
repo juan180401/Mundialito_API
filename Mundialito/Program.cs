@@ -45,6 +45,8 @@ builder.Services.AddScoped<StandingQueryRepository>();
 
 builder.Services.AddScoped<IIdempotencyRepository, IdempotencyRepository>();
 
+builder.Services.AddLogging();
+
 
 // Add services to the container.
 

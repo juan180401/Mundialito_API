@@ -27,6 +27,7 @@ namespace Application.Commands.Matches
             _teamRepository = teamRepository;
             _matchRepository = matchRepository;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public async Task<Result<Guid>> Handle(CreateMatchCommand command)
