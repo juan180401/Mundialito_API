@@ -25,6 +25,7 @@ public class RegisterMatchResultCommandHandler
         _playerRepository = playerRepository;
         _matchGoalRepository = matchGoalRepository;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result> Handle(RegisterMatchResultCommand command)

@@ -85,6 +85,8 @@ namespace Infrastructure.Queries
 
                 SELECT 
                     m.Id AS MatchId,
+                    m.HomeTeamId,
+                    m.AwayTeamId,
                     ht.Name AS HomeTeamName,
                     at.Name AS AwayTeamName,
                     m.HomeGoals,
